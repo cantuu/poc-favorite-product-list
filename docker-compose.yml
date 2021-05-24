@@ -1,0 +1,40 @@
+version: '3'
+services:
+
+  postgres:
+    image: postgres:latest
+    container_name: full_db
+    environment:
+      - POSTGRES_USER=${DB_USER}  
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST} 
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+ #   networks:
+ #     - ms
+  
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566-4599:4566-4599"
+      - "8055:8080"
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    
+    volumes:
+      - './.localstack:/tmp/localstack'
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+volumes:
+  # api:
+  database_postgres:
+
+#networks:
+#  ms:
+
